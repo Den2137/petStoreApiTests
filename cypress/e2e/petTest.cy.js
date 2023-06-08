@@ -79,12 +79,12 @@ it('Find pet by status', () => {
   })
 })
 
-it('Update pet', () => {
-  cy.log(`Update pet with id: ${pet.id}`)
+it('Update pet with form data', () => {
+  cy.log(`Update pet with form data: ${pet.id}`)
 
-  pet.name = 'Qweqwe';
-  pet.status = 'sold'
-  cy.request('PUT', '/pet', pet).then( response => {
+  pet.name = 'Barry';
+  pet.status = 'available'
+  cy.request('POST', '/pet', pet).then( response => {
     expect(response.status).to.be.equal(200);
     expect(response.body.id).to.be.equal(pet.id);
     expect(response.body.name).to.be.equal(pet.name);
@@ -97,5 +97,21 @@ it('Update pet', () => {
     expect(response.body.name).to.be.equal(pet.name);
     expect(response.body.category.id).to.be.equal(pet.category.id);
     expect(response.body.category.name).to.be.equal(pet.category.name);
+  })
+})
+
+it('Delete pet', () => {
+  cy.log(`Delete pet: ${pet.id}`)
+  
+  cy.request('DELETE', `/pet/${pet.id}`).then( response => {
+    expect(response.status).to.be.equal(200);
+  })
+
+  cy.request({
+    method: 'GET',
+    url: `/pet/${pet.id}`,
+    failOnStatusCode: false
+  }).then( response => {
+    expect(response.status).to.be.equal(404);
   })
 })
